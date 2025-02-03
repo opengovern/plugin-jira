@@ -3,7 +3,7 @@ package opengovernance
 
 import (
 	"context"
-	template "github.com/opengovern/og-describer-template/discovery/provider"
+	template "github.com/opengovern/og-describer-jira/discovery/provider"
 	essdk "github.com/opengovern/og-util/pkg/opengovernance-es-sdk"
 	steampipesdk "github.com/opengovern/og-util/pkg/steampipe"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"

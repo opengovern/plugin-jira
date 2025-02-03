@@ -173,11 +173,11 @@ result will be saved in the output.json file.
 
 You can connect the describer to steampipe. For this, you should implement the steampipe plugin.
 
-You can use the [example plugin](./cloudql/template) as a reference. Example is for describing CohereAI datasets resource.
+You can use the [example plugin](./cloudql/jira) as a reference. Example is for describing CohereAI datasets resource.
 
 ### 7.1 Add Table for the resource
 
-Add a file with this format: `table_template_resource.go` in the [plugin folder](./cloudql/template).
+Add a file with this format: `table_template_resource.go` in the [plugin folder](./cloudql/jira).
 You Should implement the table definition for the resource. [Example file](./cloudql/template/table_template_artifact_dockerfile.go) is for describing CohereAI datasets resource.
 
 **Note:** Transform Field should have `Description.` prefix.

@@ -1,4 +1,4 @@
-package template
+package jira
 
 import (
 	"context"
@@ -12,15 +12,16 @@ import (
 // Plugin returns this plugin
 func Plugin(ctx context.Context) *plugin.Plugin {
 	p := &plugin.Plugin{
-		Name: "steampipe-plugin-github",
+		Name: "steampipe-plugin-jira",
 		ConnectionConfigSchema: &plugin.ConnectionConfigSchema{
 			NewInstance: essdk.ConfigInstance,
 			Schema:      essdk.ConfigSchema(),
 		},
 		DefaultTransform: transform.FromCamel(),
 		TableMap: map[string]*plugin.Table{
-			
-			"github_artifact_dockerfile": tableGitHubArtifactDockerFile(),
+			"jira_board":   tableJiraBoard(ctx),
+			"jira_issue":   tableJiraIssue(ctx),
+			"jira_project": tableJiraProject(ctx),
 		},
 	}
 	for key, table := range p.TableMap {
