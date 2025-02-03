@@ -27,19 +27,6 @@ func ListIssues(ctx context.Context, client *jira.Client, stream *models.StreamS
 		return nil, fmt.Errorf("project key parameter must be configured")
 	}
 
-	//var projectName string
-	//projectNameParam := ctx.Value("project_name")
-	//if projectNameParam != nil {
-	//	value, ok := projectNameParam.(string)
-	//	if ok && value != "" {
-	//		projectName = value
-	//	} else {
-	//		return nil, fmt.Errorf("project name parameter must be configured")
-	//	}
-	//} else {
-	//	return nil, fmt.Errorf("project name parameter must be configured")
-	//}
-
 	var status string
 	statusParam := ctx.Value("status")
 	if statusParam != nil {
@@ -75,7 +62,7 @@ func ListIssues(ctx context.Context, client *jira.Client, stream *models.StreamS
 		}
 	}
 
-	baseURL := "rest/api/3/search"
+	baseURL := "rest/api/3/search/jql"
 	last := 0
 	jql := fmt.Sprintf("project=%s AND status=%s AND statusCategory=%s", projectKey, status, statusCategory)
 
