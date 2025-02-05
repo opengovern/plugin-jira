@@ -13,7 +13,7 @@ var Manifest []byte
 var SetupMd []byte
 
 const (
-	IntegrationName = integration.Type("jira_account") // example: aws_cloud, azure_subscription, github_account
+	IntegrationName = integration.Type("jira_cloud") // example: aws_cloud, azure_subscription, github_account
 )
 
 const (

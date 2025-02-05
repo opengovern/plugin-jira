@@ -4,7 +4,7 @@ import "github.com/opengovern/og-util/pkg/integration"
 
 const (
 	IntegrationTypeLower = "jira"                                    // example: aws, azure
-	IntegrationName      = integration.Type("jira_account")          // example: aws_account, github_account
+	IntegrationName      = integration.Type("jira_cloud")            // example: aws_account, github_account
 	OGPluginRepoURL      = "github.com/opengovern/og-describer-jira" // example: github.com/opengovern/og-describer-aws
 )
 
