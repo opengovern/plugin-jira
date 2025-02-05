@@ -35,7 +35,7 @@
           {
             "name": "username",
             "label": "Username",
-            "inputType": "password",
+            "inputType": "text",
             "required": true,
             "order": 1,
             "validation": {
@@ -55,7 +55,7 @@
           {
             "name": "base_url",
             "label": "Base URL",
-            "inputType": "password",
+            "inputType": "text",
             "required": true,
             "order": 1,
             "validation": {
