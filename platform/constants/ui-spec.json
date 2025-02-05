@@ -24,40 +24,26 @@
             },
             "info": "Your API key with appropriate scopes.",
             "external_help_url": "https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/"
-          }
-        ]
-      },
-      {
-        "type": "username",
-        "label": "Username",
-        "priority": 1,
-        "fields": [
+          },
           {
             "name": "username",
             "label": "Username",
             "inputType": "text",
             "required": true,
-            "order": 1,
+            "order": 2,
             "validation": {
               "pattern": "^[a-zA-Z0-9+_/-]{0,200}$",
               "errorMessage": ""
             },
             "info": "Your email address associated with jira account",
             "external_help_url": ""
-          }
-        ]
-      },
-      {
-        "type": "base_url",
-        "label": "Base URL",
-        "priority": 1,
-        "fields": [
+          },
           {
             "name": "base_url",
             "label": "Base URL",
             "inputType": "text",
             "required": true,
-            "order": 1,
+            "order": 3,
             "validation": {
               "pattern": "^[a-zA-Z0-9+_/-]{0,200}$",
               "errorMessage": ""
