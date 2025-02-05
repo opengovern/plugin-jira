@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/opengovern/og-describer-template/global"
+	"github.com/opengovern/og-describer-jira/global"
 	"os"
 	"strings"
 )

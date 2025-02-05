@@ -1,3 +1,3 @@
 FROM alpine:latest
 
-COPY ../build/steampipe-plugin-template.plugin /steampipe-plugin-template.plugin
+COPY ../build/steampipe-plugin-jira.plugin /steampipe-plugin-jira.plugin

@@ -1,24 +1,52 @@
 [
  {
-   "ResourceName": "Github/Artifact/DockerFile",
-   "Tags": {
-     "category": ["artifact_dockerfile"]
-   },
-   "ListDescriber": "DescribeByIntegration(describers.ListType)",
-   "GetDescriber": "",
-   "SteampipeTable": "template_artifact_dockerfile",
-   "Model": "ArtifactDockerFile",
+   "ResourceName": "Jira/Project",
+   "ListDescriber": "DescribeListByJira(describers.ListProjects)",
+   "GetDescriber": "DescribeSingleByJira(describers.GetProject)",
+   "SteampipeTable": "jira_project",
+   "Model": "Project",
    "Params": [
      {
-       "Name": "repository",
-       "Description": "Please provide the repo name (i.e. internal-tools)",
-       "Required": false
-     },
-     {
-       "Name": "organization",
-       "Description": "Please provide the organization name",
-       "Required": false
+       "Name": "project_key",
+       "Description": "Please provide the project key",
+       "Required": true
      }
    ]
- }
+ },
+  {
+    "ResourceName": "Jira/Issue",
+    "ListDescriber": "DescribeListByJira(describers.ListIssues)",
+    "GetDescriber": "DescribeSingleByJira(describers.GetIssue)",
+    "SteampipeTable": "jira_issue",
+    "Model": "Issue",
+    "Params": [
+      {
+        "Name": "project_key",
+        "Description": "Please provide the project key",
+        "Required": true
+      },
+      {
+        "Name": "status",
+        "Description": "Please provide the status",
+        "Required": true
+      },
+      {
+        "Name": "status_category",
+        "Description": "Please provide the status category",
+        "Required": true
+      },
+      {
+        "Name": "fields",
+        "Description": "Please provide the fields",
+        "Required": false
+      }
+    ]
+  },
+  {
+    "ResourceName": "Jira/Board",
+    "ListDescriber": "DescribeListByJira(describers.ListBoards)",
+    "GetDescriber": "DescribeSingleByJira(describers.GetBoard)",
+    "SteampipeTable": "jira_board",
+    "Model": "Board"
+  }
 ]

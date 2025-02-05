@@ -1,55 +1,106 @@
 package maps
+
 import (
-	"github.com/opengovern/og-describer-template/discovery/describers"
-	"github.com/opengovern/og-describer-template/discovery/provider"
-	"github.com/opengovern/og-describer-template/platform/constants"
+	"github.com/opengovern/og-describer-jira/discovery/describers"
+	model "github.com/opengovern/og-describer-jira/discovery/pkg/models"
+	"github.com/opengovern/og-describer-jira/discovery/provider"
+	"github.com/opengovern/og-describer-jira/platform/constants"
 	"github.com/opengovern/og-util/pkg/integration/interfaces"
-	model "github.com/opengovern/og-describer-template/discovery/pkg/models"
 )
+
 var ResourceTypes = map[string]model.ResourceType{
 
-	"Github/Artifact/DockerFile": {
-		IntegrationType:      constants.IntegrationName,
-		ResourceName:         "Github/Artifact/DockerFile",
-		Tags:                 map[string][]string{
-            "category": {"artifact_dockerfile"},
-        },
-		Labels:               map[string]string{
-        },
-		Annotations:          map[string]string{
-        },
-		ListDescriber:        provider.DescribeByIntegration(describers.ListType),
-		GetDescriber:         nil,
+	"Jira/Project": {
+		IntegrationType: constants.IntegrationName,
+		ResourceName:    "Jira/Project",
+		Tags:            map[string][]string{},
+		Labels:          map[string]string{},
+		Annotations:     map[string]string{},
+		ListDescriber:   provider.DescribeListByJira(describers.ListProjects),
+		GetDescriber:    provider.DescribeSingleByJira(describers.GetProject),
+	},
+
+	"Jira/Issue": {
+		IntegrationType: constants.IntegrationName,
+		ResourceName:    "Jira/Issue",
+		Tags:            map[string][]string{},
+		Labels:          map[string]string{},
+		Annotations:     map[string]string{},
+		ListDescriber:   provider.DescribeListByJira(describers.ListIssues),
+		GetDescriber:    provider.DescribeSingleByJira(describers.GetIssue),
+	},
+
+	"Jira/Board": {
+		IntegrationType: constants.IntegrationName,
+		ResourceName:    "Jira/Board",
+		Tags:            map[string][]string{},
+		Labels:          map[string]string{},
+		Annotations:     map[string]string{},
+		ListDescriber:   provider.DescribeListByJira(describers.ListBoards),
+		GetDescriber:    provider.DescribeSingleByJira(describers.GetBoard),
 	},
 }
-
 
 var ResourceTypeConfigs = map[string]*interfaces.ResourceTypeConfiguration{
 
-	"Github/Artifact/DockerFile": {
-		Name:         "Github/Artifact/DockerFile",
-		IntegrationType:      constants.IntegrationName,
-		Description:                 "",
-		Params:           	[]interfaces.Param{
+	"Jira/Project": {
+		Name:            "Jira/Project",
+		IntegrationType: constants.IntegrationName,
+		Description:     "",
+		Params: []interfaces.Param{
 			{
-				Name:  "organization",
-				Description: "Please provide the organization name",
+				Name:        "project_key",
+				Description: "Please provide the project key",
+				Required:    true,
+				Default:     nil,
+			},
+		},
+	},
+
+	"Jira/Issue": {
+		Name:            "Jira/Issue",
+		IntegrationType: constants.IntegrationName,
+		Description:     "",
+		Params: []interfaces.Param{
+			{
+				Name:        "fields",
+				Description: "Please provide the fields",
 				Required:    false,
 				Default:     nil,
 			},
-			
+
 			{
-				Name:  "repository",
-				Description: "Please provide the repo name (i.e. internal-tools)",
-				Required:    false,
+				Name:        "project_key",
+				Description: "Please provide the project key",
+				Required:    true,
 				Default:     nil,
 			},
-			      },
-		
+
+			{
+				Name:        "status",
+				Description: "Please provide the status",
+				Required:    true,
+				Default:     nil,
+			},
+
+			{
+				Name:        "status_category",
+				Description: "Please provide the status category",
+				Required:    true,
+				Default:     nil,
+			},
+		},
+	},
+
+	"Jira/Board": {
+		Name:            "Jira/Board",
+		IntegrationType: constants.IntegrationName,
+		Description:     "",
 	},
 }
 
-
 var ResourceTypesList = []string{
-  "Github/Artifact/DockerFile",
+	"Jira/Project",
+	"Jira/Issue",
+	"Jira/Board",
 }

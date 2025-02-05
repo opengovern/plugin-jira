@@ -3,7 +3,7 @@ package opengovernance
 
 import (
 	"context"
-	template "github.com/opengovern/og-describer-template/discovery/provider"
+	jira "github.com/opengovern/og-describer-jira/discovery/provider"
 	essdk "github.com/opengovern/og-util/pkg/opengovernance-es-sdk"
 	steampipesdk "github.com/opengovern/og-util/pkg/steampipe"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
@@ -14,72 +14,72 @@ type Client struct {
 	essdk.Client
 }
 
-// ==========================  START: ArtifactDockerFile =============================
+// ==========================  START: Project =============================
 
-type ArtifactDockerFile struct {
-	ResourceID      string                                 `json:"resource_id"`
-	PlatformID      string                                 `json:"platform_id"`
-	Description     template.ArtifactDockerFileDescription `json:"Description"`
-	Metadata        template.Metadata                      `json:"metadata"`
-	DescribedBy     string                                 `json:"described_by"`
-	ResourceType    string                                 `json:"resource_type"`
-	IntegrationType string                                 `json:"integration_type"`
-	IntegrationID   string                                 `json:"integration_id"`
+type Project struct {
+	ResourceID      string                  `json:"resource_id"`
+	PlatformID      string                  `json:"platform_id"`
+	Description     jira.ProjectDescription `json:"Description"`
+	Metadata        jira.Metadata           `json:"metadata"`
+	DescribedBy     string                  `json:"described_by"`
+	ResourceType    string                  `json:"resource_type"`
+	IntegrationType string                  `json:"integration_type"`
+	IntegrationID   string                  `json:"integration_id"`
 }
 
-type ArtifactDockerFileHit struct {
-	ID      string             `json:"_id"`
-	Score   float64            `json:"_score"`
-	Index   string             `json:"_index"`
-	Type    string             `json:"_type"`
-	Version int64              `json:"_version,omitempty"`
-	Source  ArtifactDockerFile `json:"_source"`
-	Sort    []interface{}      `json:"sort"`
+type ProjectHit struct {
+	ID      string        `json:"_id"`
+	Score   float64       `json:"_score"`
+	Index   string        `json:"_index"`
+	Type    string        `json:"_type"`
+	Version int64         `json:"_version,omitempty"`
+	Source  Project       `json:"_source"`
+	Sort    []interface{} `json:"sort"`
 }
 
-type ArtifactDockerFileHits struct {
-	Total essdk.SearchTotal       `json:"total"`
-	Hits  []ArtifactDockerFileHit `json:"hits"`
+type ProjectHits struct {
+	Total essdk.SearchTotal `json:"total"`
+	Hits  []ProjectHit      `json:"hits"`
 }
 
-type ArtifactDockerFileSearchResponse struct {
-	PitID string                 `json:"pit_id"`
-	Hits  ArtifactDockerFileHits `json:"hits"`
+type ProjectSearchResponse struct {
+	PitID string      `json:"pit_id"`
+	Hits  ProjectHits `json:"hits"`
 }
 
-type ArtifactDockerFilePaginator struct {
+type ProjectPaginator struct {
 	paginator *essdk.BaseESPaginator
 }
 
-func (k Client) NewArtifactDockerFilePaginator(filters []essdk.BoolFilter, limit *int64) (ArtifactDockerFilePaginator, error) {
-	paginator, err := essdk.NewPaginator(k.ES(), "github_artifact_dockerfile", filters, limit)
+func (k Client) NewProjectPaginator(filters []essdk.BoolFilter, limit *int64) (ProjectPaginator, error) {
+	paginator, err := essdk.NewPaginator(k.ES(), "jira_project", filters, limit)
 	if err != nil {
-		return ArtifactDockerFilePaginator{}, err
+		return ProjectPaginator{}, err
 	}
 
-	p := ArtifactDockerFilePaginator{
+	p := ProjectPaginator{
 		paginator: paginator,
 	}
 
 	return p, nil
 }
 
-func (p ArtifactDockerFilePaginator) HasNext() bool {
+func (p ProjectPaginator) HasNext() bool {
 	return !p.paginator.Done()
 }
 
-func (p ArtifactDockerFilePaginator) Close(ctx context.Context) error {
+func (p ProjectPaginator) Close(ctx context.Context) error {
 	return p.paginator.Deallocate(ctx)
 }
 
-func (p ArtifactDockerFilePaginator) NextPage(ctx context.Context) ([]ArtifactDockerFile, error) {
-	var response ArtifactDockerFileSearchResponse
+func (p ProjectPaginator) NextPage(ctx context.Context) ([]Project, error) {
+	var response ProjectSearchResponse
 	err := p.paginator.Search(ctx, &response)
 	if err != nil {
 		return nil, err
 	}
 
-	var values []ArtifactDockerFile
+	var values []Project
 	for _, hit := range response.Hits.Hits {
 		values = append(values, hit.Source)
 	}
@@ -94,60 +94,62 @@ func (p ArtifactDockerFilePaginator) NextPage(ctx context.Context) ([]ArtifactDo
 	return values, nil
 }
 
-var listArtifactDockerFileFilters = map[string]string{
-	"dockerfile_content": "Description.DockerfileContent",
-	"html_url":           "Description.HTMLURL",
-	"images":             "Description.Images",
-	"last_updated_at":    "Description.LastUpdatedAt",
-	"name":               "Description.Name",
-	"repository":         "Description.Repository",
-	"sha":                "Description.Sha",
+var listProjectFilters = map[string]string{
+	"avatar_urls":      "Description.AvatarUrls",
+	"id":               "Description.ID",
+	"insight":          "Description.Insight",
+	"key":              "Description.Key",
+	"name":             "Description.Name",
+	"project_category": "Description.ProjectCategory",
+	"self":             "Description.Self",
+	"simplified":       "Description.Simplified",
+	"style":            "Description.Style",
 }
 
-func ListArtifactDockerFile(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
-	plugin.Logger(ctx).Trace("ListArtifactDockerFile")
+func ListProject(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Trace("ListProject")
 	runtime.GC()
 
 	// create service
 	cfg := essdk.GetConfig(d.Connection)
 	ke, err := essdk.NewClientCached(cfg, d.ConnectionCache, ctx)
 	if err != nil {
-		plugin.Logger(ctx).Error("ListArtifactDockerFile NewClientCached", "error", err)
+		plugin.Logger(ctx).Error("ListProject NewClientCached", "error", err)
 		return nil, err
 	}
 	k := Client{Client: ke}
 
 	sc, err := steampipesdk.NewSelfClientCached(ctx, d.ConnectionCache)
 	if err != nil {
-		plugin.Logger(ctx).Error("ListArtifactDockerFile NewSelfClientCached", "error", err)
+		plugin.Logger(ctx).Error("ListProject NewSelfClientCached", "error", err)
 		return nil, err
 	}
 	integrationId, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyIntegrationID)
 	if err != nil {
-		plugin.Logger(ctx).Error("ListArtifactDockerFile GetConfigTableValueOrNil for OpenGovernanceConfigKeyIntegrationID", "error", err)
+		plugin.Logger(ctx).Error("ListProject GetConfigTableValueOrNil for OpenGovernanceConfigKeyIntegrationID", "error", err)
 		return nil, err
 	}
 	encodedResourceCollectionFilters, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyResourceCollectionFilters)
 	if err != nil {
-		plugin.Logger(ctx).Error("ListArtifactDockerFile GetConfigTableValueOrNil for OpenGovernanceConfigKeyResourceCollectionFilters", "error", err)
+		plugin.Logger(ctx).Error("ListProject GetConfigTableValueOrNil for OpenGovernanceConfigKeyResourceCollectionFilters", "error", err)
 		return nil, err
 	}
 	clientType, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyClientType)
 	if err != nil {
-		plugin.Logger(ctx).Error("ListArtifactDockerFile GetConfigTableValueOrNil for OpenGovernanceConfigKeyClientType", "error", err)
+		plugin.Logger(ctx).Error("ListProject GetConfigTableValueOrNil for OpenGovernanceConfigKeyClientType", "error", err)
 		return nil, err
 	}
 
-	paginator, err := k.NewArtifactDockerFilePaginator(essdk.BuildFilter(ctx, d.QueryContext, listArtifactDockerFileFilters, integrationId, encodedResourceCollectionFilters, clientType), d.QueryContext.Limit)
+	paginator, err := k.NewProjectPaginator(essdk.BuildFilter(ctx, d.QueryContext, listProjectFilters, integrationId, encodedResourceCollectionFilters, clientType), d.QueryContext.Limit)
 	if err != nil {
-		plugin.Logger(ctx).Error("ListArtifactDockerFile NewArtifactDockerFilePaginator", "error", err)
+		plugin.Logger(ctx).Error("ListProject NewProjectPaginator", "error", err)
 		return nil, err
 	}
 
 	for paginator.HasNext() {
 		page, err := paginator.NextPage(ctx)
 		if err != nil {
-			plugin.Logger(ctx).Error("ListArtifactDockerFile paginator.NextPage", "error", err)
+			plugin.Logger(ctx).Error("ListProject paginator.NextPage", "error", err)
 			return nil, err
 		}
 
@@ -164,18 +166,20 @@ func ListArtifactDockerFile(ctx context.Context, d *plugin.QueryData, _ *plugin.
 	return nil, nil
 }
 
-var getArtifactDockerFileFilters = map[string]string{
-	"dockerfile_content": "Description.DockerfileContent",
-	"html_url":           "Description.HTMLURL",
-	"images":             "Description.Images",
-	"last_updated_at":    "Description.LastUpdatedAt",
-	"name":               "Description.Name",
-	"repository":         "Description.Repository",
-	"sha":                "Description.Sha",
+var getProjectFilters = map[string]string{
+	"avatar_urls":      "Description.AvatarUrls",
+	"id":               "Description.ID",
+	"insight":          "Description.Insight",
+	"key":              "Description.Key",
+	"name":             "Description.Name",
+	"project_category": "Description.ProjectCategory",
+	"self":             "Description.Self",
+	"simplified":       "Description.Simplified",
+	"style":            "Description.Style",
 }
 
-func GetArtifactDockerFile(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
-	plugin.Logger(ctx).Trace("GetArtifactDockerFile")
+func GetProject(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Trace("GetProject")
 	runtime.GC()
 	// create service
 	cfg := essdk.GetConfig(d.Connection)
@@ -203,7 +207,7 @@ func GetArtifactDockerFile(ctx context.Context, d *plugin.QueryData, _ *plugin.H
 	}
 
 	limit := int64(1)
-	paginator, err := k.NewArtifactDockerFilePaginator(essdk.BuildFilter(ctx, d.QueryContext, getArtifactDockerFileFilters, integrationId, encodedResourceCollectionFilters, clientType), &limit)
+	paginator, err := k.NewProjectPaginator(essdk.BuildFilter(ctx, d.QueryContext, getProjectFilters, integrationId, encodedResourceCollectionFilters, clientType), &limit)
 	if err != nil {
 		return nil, err
 	}
@@ -227,4 +231,424 @@ func GetArtifactDockerFile(ctx context.Context, d *plugin.QueryData, _ *plugin.H
 	return nil, nil
 }
 
-// ==========================  END: ArtifactDockerFile =============================
+// ==========================  END: Project =============================
+
+// ==========================  START: Issue =============================
+
+type Issue struct {
+	ResourceID      string                `json:"resource_id"`
+	PlatformID      string                `json:"platform_id"`
+	Description     jira.IssueDescription `json:"Description"`
+	Metadata        jira.Metadata         `json:"metadata"`
+	DescribedBy     string                `json:"described_by"`
+	ResourceType    string                `json:"resource_type"`
+	IntegrationType string                `json:"integration_type"`
+	IntegrationID   string                `json:"integration_id"`
+}
+
+type IssueHit struct {
+	ID      string        `json:"_id"`
+	Score   float64       `json:"_score"`
+	Index   string        `json:"_index"`
+	Type    string        `json:"_type"`
+	Version int64         `json:"_version,omitempty"`
+	Source  Issue         `json:"_source"`
+	Sort    []interface{} `json:"sort"`
+}
+
+type IssueHits struct {
+	Total essdk.SearchTotal `json:"total"`
+	Hits  []IssueHit        `json:"hits"`
+}
+
+type IssueSearchResponse struct {
+	PitID string    `json:"pit_id"`
+	Hits  IssueHits `json:"hits"`
+}
+
+type IssuePaginator struct {
+	paginator *essdk.BaseESPaginator
+}
+
+func (k Client) NewIssuePaginator(filters []essdk.BoolFilter, limit *int64) (IssuePaginator, error) {
+	paginator, err := essdk.NewPaginator(k.ES(), "jira_issue", filters, limit)
+	if err != nil {
+		return IssuePaginator{}, err
+	}
+
+	p := IssuePaginator{
+		paginator: paginator,
+	}
+
+	return p, nil
+}
+
+func (p IssuePaginator) HasNext() bool {
+	return !p.paginator.Done()
+}
+
+func (p IssuePaginator) Close(ctx context.Context) error {
+	return p.paginator.Deallocate(ctx)
+}
+
+func (p IssuePaginator) NextPage(ctx context.Context) ([]Issue, error) {
+	var response IssueSearchResponse
+	err := p.paginator.Search(ctx, &response)
+	if err != nil {
+		return nil, err
+	}
+
+	var values []Issue
+	for _, hit := range response.Hits.Hits {
+		values = append(values, hit.Source)
+	}
+
+	hits := int64(len(response.Hits.Hits))
+	if hits > 0 {
+		p.paginator.UpdateState(hits, response.Hits.Hits[hits-1].Sort, response.PitID)
+	} else {
+		p.paginator.UpdateState(hits, nil, "")
+	}
+
+	return values, nil
+}
+
+var listIssueFilters = map[string]string{
+	"expand": "Description.Expand",
+	"fields": "Description.Fields",
+	"id":     "Description.ID",
+	"key":    "Description.Key",
+	"self":   "Description.Self",
+}
+
+func ListIssue(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Trace("ListIssue")
+	runtime.GC()
+
+	// create service
+	cfg := essdk.GetConfig(d.Connection)
+	ke, err := essdk.NewClientCached(cfg, d.ConnectionCache, ctx)
+	if err != nil {
+		plugin.Logger(ctx).Error("ListIssue NewClientCached", "error", err)
+		return nil, err
+	}
+	k := Client{Client: ke}
+
+	sc, err := steampipesdk.NewSelfClientCached(ctx, d.ConnectionCache)
+	if err != nil {
+		plugin.Logger(ctx).Error("ListIssue NewSelfClientCached", "error", err)
+		return nil, err
+	}
+	integrationId, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyIntegrationID)
+	if err != nil {
+		plugin.Logger(ctx).Error("ListIssue GetConfigTableValueOrNil for OpenGovernanceConfigKeyIntegrationID", "error", err)
+		return nil, err
+	}
+	encodedResourceCollectionFilters, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyResourceCollectionFilters)
+	if err != nil {
+		plugin.Logger(ctx).Error("ListIssue GetConfigTableValueOrNil for OpenGovernanceConfigKeyResourceCollectionFilters", "error", err)
+		return nil, err
+	}
+	clientType, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyClientType)
+	if err != nil {
+		plugin.Logger(ctx).Error("ListIssue GetConfigTableValueOrNil for OpenGovernanceConfigKeyClientType", "error", err)
+		return nil, err
+	}
+
+	paginator, err := k.NewIssuePaginator(essdk.BuildFilter(ctx, d.QueryContext, listIssueFilters, integrationId, encodedResourceCollectionFilters, clientType), d.QueryContext.Limit)
+	if err != nil {
+		plugin.Logger(ctx).Error("ListIssue NewIssuePaginator", "error", err)
+		return nil, err
+	}
+
+	for paginator.HasNext() {
+		page, err := paginator.NextPage(ctx)
+		if err != nil {
+			plugin.Logger(ctx).Error("ListIssue paginator.NextPage", "error", err)
+			return nil, err
+		}
+
+		for _, v := range page {
+			d.StreamListItem(ctx, v)
+		}
+	}
+
+	err = paginator.Close(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+}
+
+var getIssueFilters = map[string]string{
+	"expand": "Description.Expand",
+	"fields": "Description.Fields",
+	"id":     "Description.ID",
+	"key":    "Description.Key",
+	"self":   "Description.Self",
+}
+
+func GetIssue(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Trace("GetIssue")
+	runtime.GC()
+	// create service
+	cfg := essdk.GetConfig(d.Connection)
+	ke, err := essdk.NewClientCached(cfg, d.ConnectionCache, ctx)
+	if err != nil {
+		return nil, err
+	}
+	k := Client{Client: ke}
+
+	sc, err := steampipesdk.NewSelfClientCached(ctx, d.ConnectionCache)
+	if err != nil {
+		return nil, err
+	}
+	integrationId, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyIntegrationID)
+	if err != nil {
+		return nil, err
+	}
+	encodedResourceCollectionFilters, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyResourceCollectionFilters)
+	if err != nil {
+		return nil, err
+	}
+	clientType, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyClientType)
+	if err != nil {
+		return nil, err
+	}
+
+	limit := int64(1)
+	paginator, err := k.NewIssuePaginator(essdk.BuildFilter(ctx, d.QueryContext, getIssueFilters, integrationId, encodedResourceCollectionFilters, clientType), &limit)
+	if err != nil {
+		return nil, err
+	}
+
+	for paginator.HasNext() {
+		page, err := paginator.NextPage(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, v := range page {
+			return v, nil
+		}
+	}
+
+	err = paginator.Close(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+}
+
+// ==========================  END: Issue =============================
+
+// ==========================  START: Board =============================
+
+type Board struct {
+	ResourceID      string                `json:"resource_id"`
+	PlatformID      string                `json:"platform_id"`
+	Description     jira.BoardDescription `json:"Description"`
+	Metadata        jira.Metadata         `json:"metadata"`
+	DescribedBy     string                `json:"described_by"`
+	ResourceType    string                `json:"resource_type"`
+	IntegrationType string                `json:"integration_type"`
+	IntegrationID   string                `json:"integration_id"`
+}
+
+type BoardHit struct {
+	ID      string        `json:"_id"`
+	Score   float64       `json:"_score"`
+	Index   string        `json:"_index"`
+	Type    string        `json:"_type"`
+	Version int64         `json:"_version,omitempty"`
+	Source  Board         `json:"_source"`
+	Sort    []interface{} `json:"sort"`
+}
+
+type BoardHits struct {
+	Total essdk.SearchTotal `json:"total"`
+	Hits  []BoardHit        `json:"hits"`
+}
+
+type BoardSearchResponse struct {
+	PitID string    `json:"pit_id"`
+	Hits  BoardHits `json:"hits"`
+}
+
+type BoardPaginator struct {
+	paginator *essdk.BaseESPaginator
+}
+
+func (k Client) NewBoardPaginator(filters []essdk.BoolFilter, limit *int64) (BoardPaginator, error) {
+	paginator, err := essdk.NewPaginator(k.ES(), "jira_board", filters, limit)
+	if err != nil {
+		return BoardPaginator{}, err
+	}
+
+	p := BoardPaginator{
+		paginator: paginator,
+	}
+
+	return p, nil
+}
+
+func (p BoardPaginator) HasNext() bool {
+	return !p.paginator.Done()
+}
+
+func (p BoardPaginator) Close(ctx context.Context) error {
+	return p.paginator.Deallocate(ctx)
+}
+
+func (p BoardPaginator) NextPage(ctx context.Context) ([]Board, error) {
+	var response BoardSearchResponse
+	err := p.paginator.Search(ctx, &response)
+	if err != nil {
+		return nil, err
+	}
+
+	var values []Board
+	for _, hit := range response.Hits.Hits {
+		values = append(values, hit.Source)
+	}
+
+	hits := int64(len(response.Hits.Hits))
+	if hits > 0 {
+		p.paginator.UpdateState(hits, response.Hits.Hits[hits-1].Sort, response.PitID)
+	} else {
+		p.paginator.UpdateState(hits, nil, "")
+	}
+
+	return values, nil
+}
+
+var listBoardFilters = map[string]string{
+	"id":   "Description.ID",
+	"name": "Description.Name",
+	"self": "Description.Self",
+	"type": "Description.Type",
+}
+
+func ListBoard(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Trace("ListBoard")
+	runtime.GC()
+
+	// create service
+	cfg := essdk.GetConfig(d.Connection)
+	ke, err := essdk.NewClientCached(cfg, d.ConnectionCache, ctx)
+	if err != nil {
+		plugin.Logger(ctx).Error("ListBoard NewClientCached", "error", err)
+		return nil, err
+	}
+	k := Client{Client: ke}
+
+	sc, err := steampipesdk.NewSelfClientCached(ctx, d.ConnectionCache)
+	if err != nil {
+		plugin.Logger(ctx).Error("ListBoard NewSelfClientCached", "error", err)
+		return nil, err
+	}
+	integrationId, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyIntegrationID)
+	if err != nil {
+		plugin.Logger(ctx).Error("ListBoard GetConfigTableValueOrNil for OpenGovernanceConfigKeyIntegrationID", "error", err)
+		return nil, err
+	}
+	encodedResourceCollectionFilters, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyResourceCollectionFilters)
+	if err != nil {
+		plugin.Logger(ctx).Error("ListBoard GetConfigTableValueOrNil for OpenGovernanceConfigKeyResourceCollectionFilters", "error", err)
+		return nil, err
+	}
+	clientType, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyClientType)
+	if err != nil {
+		plugin.Logger(ctx).Error("ListBoard GetConfigTableValueOrNil for OpenGovernanceConfigKeyClientType", "error", err)
+		return nil, err
+	}
+
+	paginator, err := k.NewBoardPaginator(essdk.BuildFilter(ctx, d.QueryContext, listBoardFilters, integrationId, encodedResourceCollectionFilters, clientType), d.QueryContext.Limit)
+	if err != nil {
+		plugin.Logger(ctx).Error("ListBoard NewBoardPaginator", "error", err)
+		return nil, err
+	}
+
+	for paginator.HasNext() {
+		page, err := paginator.NextPage(ctx)
+		if err != nil {
+			plugin.Logger(ctx).Error("ListBoard paginator.NextPage", "error", err)
+			return nil, err
+		}
+
+		for _, v := range page {
+			d.StreamListItem(ctx, v)
+		}
+	}
+
+	err = paginator.Close(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+}
+
+var getBoardFilters = map[string]string{
+	"id":   "Description.ID",
+	"name": "Description.Name",
+	"self": "Description.Self",
+	"type": "Description.Type",
+}
+
+func GetBoard(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Trace("GetBoard")
+	runtime.GC()
+	// create service
+	cfg := essdk.GetConfig(d.Connection)
+	ke, err := essdk.NewClientCached(cfg, d.ConnectionCache, ctx)
+	if err != nil {
+		return nil, err
+	}
+	k := Client{Client: ke}
+
+	sc, err := steampipesdk.NewSelfClientCached(ctx, d.ConnectionCache)
+	if err != nil {
+		return nil, err
+	}
+	integrationId, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyIntegrationID)
+	if err != nil {
+		return nil, err
+	}
+	encodedResourceCollectionFilters, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyResourceCollectionFilters)
+	if err != nil {
+		return nil, err
+	}
+	clientType, err := sc.GetConfigTableValueOrNil(ctx, steampipesdk.OpenGovernanceConfigKeyClientType)
+	if err != nil {
+		return nil, err
+	}
+
+	limit := int64(1)
+	paginator, err := k.NewBoardPaginator(essdk.BuildFilter(ctx, d.QueryContext, getBoardFilters, integrationId, encodedResourceCollectionFilters, clientType), &limit)
+	if err != nil {
+		return nil, err
+	}
+
+	for paginator.HasNext() {
+		page, err := paginator.NextPage(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, v := range page {
+			return v, nil
+		}
+	}
+
+	err = paginator.Close(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+}
+
+// ==========================  END: Board =============================
