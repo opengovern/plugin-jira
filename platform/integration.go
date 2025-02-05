@@ -19,7 +19,7 @@ func (i *Integration) GetConfiguration() (interfaces.IntegrationConfiguration, e
 		NatsConsumerGroup:        global.ConsumerGroup,
 		NatsConsumerGroupManuals: global.ConsumerGroupManuals,
 
-		SteampipePluginName: "template",
+		SteampipePluginName: "jira",
 
 		UISpec:   constants.UISpec,
 		Manifest: constants.Manifest,
@@ -36,9 +36,8 @@ func (i *Integration) HealthCheck(jsonData []byte, providerId string, labels map
 	if err != nil {
 		return false, err
 	}
-	// TODO add credentials
-	isHealthy, err := IntegrationHealthcheck(Config{})
 
+	isHealthy, err := JiraIntegrationHealthcheck(credentials.BaseURL, credentials.Username, credentials.APIKey)
 	return isHealthy, err
 }
 
@@ -49,8 +48,15 @@ func (i *Integration) DiscoverIntegrations(jsonData []byte) ([]integration.Integ
 		return nil, err
 	}
 	var integrations []integration.Integration
-	// TODO
-	_, err = IntegrationDiscovery(Config{})
+
+	jiraInstance, err := JiraIntegrationDiscovery(credentials.BaseURL, credentials.Username, credentials.APIKey)
+	if err != nil {
+		return nil, err
+	}
+	integrations = append(integrations, integration.Integration{
+		ProviderID: jiraInstance.BaseURL,
+		Name:       jiraInstance.DisplayURL,
+	})
 
 	return integrations, nil
 }

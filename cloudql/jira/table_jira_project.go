@@ -2,6 +2,7 @@ package jira
 
 import (
 	"context"
+	opengovernance "github.com/opengovern/og-describer-jira/discovery/pkg/es"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -12,13 +13,13 @@ func tableJiraProject(ctx context.Context) *plugin.Table {
 		Name:        "jira_project",
 		Description: "Jira projects information.",
 		List: &plugin.ListConfig{
-			Hydrate: nil,
+			Hydrate: opengovernance.ListProject,
 		},
 		Get: &plugin.GetConfig{
 			KeyColumns: plugin.SingleColumn("id"),
-			Hydrate:    nil,
+			Hydrate:    opengovernance.GetProject,
 		},
-		Columns: commonColumns([]*plugin.Column{
+		Columns: integrationColumns([]*plugin.Column{
 			{
 				Name:        "id",
 				Type:        proto.ColumnType_STRING,

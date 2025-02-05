@@ -41,7 +41,7 @@ func ListIssues(ctx context.Context, client *jira.Client, stream *models.StreamS
 	}
 
 	var statusCategory string
-	statusCategoryParam := ctx.Value("status")
+	statusCategoryParam := ctx.Value("status_category")
 	if statusCategoryParam != nil {
 		value, ok := statusCategoryParam.(string)
 		if ok && value != "" {
@@ -64,7 +64,7 @@ func ListIssues(ctx context.Context, client *jira.Client, stream *models.StreamS
 
 	baseURL := "rest/api/3/search/jql"
 	last := 0
-	jql := fmt.Sprintf("project=%s AND status=%s AND statusCategory=%s", projectKey, status, statusCategory)
+	jql := fmt.Sprintf(`project="%s" AND status="%s" AND statusCategory="%s"`, projectKey, status, statusCategory)
 
 	for {
 		params := url.Values{}

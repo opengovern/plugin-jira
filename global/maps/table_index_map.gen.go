@@ -5,13 +5,19 @@ import (
 )
 
 var ResourceTypesToTables = map[string]string{
-	"Github/Artifact/DockerFile": "template_artifact_dockerfile",
+  "Jira/Project": "jira_project",
+  "Jira/Issue": "jira_issue",
+  "Jira/Board": "jira_board",
 }
 
 var ResourceTypeToDescription = map[string]interface{}{
-	"Github/Artifact/DockerFile": opengovernance.ArtifactDockerFile{},
+  "Jira/Project": opengovernance.Project{},
+  "Jira/Issue": opengovernance.Issue{},
+  "Jira/Board": opengovernance.Board{},
 }
 
 var TablesToResourceTypes = map[string]string{
-	"template_artifact_dockerfile": "Github/Artifact/DockerFile",
+  "jira_project": "Jira/Project",
+  "jira_issue": "Jira/Issue",
+  "jira_board": "Jira/Board",
 }
