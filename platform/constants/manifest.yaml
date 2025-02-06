@@ -1,4 +1,4 @@
-IntegrationType: jira_account
+IntegrationType: jira_cloud
 DescriberURL:  ghcr.io/opengovern/og-describer-jira
 Publisher: opencomply.io
 Author : opencomply engineering team

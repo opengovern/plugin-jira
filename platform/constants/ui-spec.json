@@ -1,5 +1,5 @@
 {
-  "integration_type_id": "jira_account",
+  "integration_type_id": "jira_cloud",
   "integration_name": "Jira Account",
   "help_text_md": "Jira Account integration allows secure connections to your Jira servers.",
   "platform_documentation": "https://developer.atlassian.com/cloud/jira/platform/rest/v3/",
