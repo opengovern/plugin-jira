@@ -72,7 +72,7 @@ func ListIssues(ctx context.Context, client *jira.Client, stream *models.StreamS
 		}
 	}
 
-	baseURL := "rest/api/3/search/jql"
+	baseURL := "rest/api/3/search"
 	last := 0
 	jql := fmt.Sprintf(`project = "%s" AND status = "%s" AND statusCategory = %d`, projectKey, status, statusCategoryID)
 
