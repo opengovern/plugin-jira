@@ -107,7 +107,7 @@ type FieldsJSON struct {
 	IssueLinks   []IssueLinkJSON    `json:"issuelinks"`
 	Worklog      []WorklogEntryJSON `json:"worklog"`
 	TimeTracking TimeTrackingJSON   `json:"timetracking"`
-	Updated      int                `json:"updated"`
+	Updated      string             `json:"updated"`
 }
 
 type Fields struct {
@@ -120,7 +120,7 @@ type Fields struct {
 	IssueLinks   []IssueLink
 	Worklog      []WorklogEntry
 	TimeTracking TimeTracking
-	Updated      int
+	Updated      string
 }
 
 type WatcherJSON struct {
