@@ -41,6 +41,7 @@ func ListIssues(ctx context.Context, client *jira.Client, stream *models.StreamS
 	}
 
 	var statusCategory string
+	var statusCategoryID int
 	statusCategoryParam := ctx.Value("status_category")
 	if statusCategoryParam != nil {
 		value, ok := statusCategoryParam.(string)
@@ -51,6 +52,15 @@ func ListIssues(ctx context.Context, client *jira.Client, stream *models.StreamS
 		}
 	} else {
 		return nil, fmt.Errorf("status category parameter must be configured")
+	}
+	switch statusCategory {
+	case "TO DO":
+		statusCategoryID = 2
+	case "IN PROGRESS":
+		statusCategoryID = 4
+	case "DONE":
+		statusCategoryID = 3
+	default:
 	}
 
 	var fields string
@@ -64,7 +74,7 @@ func ListIssues(ctx context.Context, client *jira.Client, stream *models.StreamS
 
 	baseURL := "rest/api/3/search/jql"
 	last := 0
-	jql := fmt.Sprintf(`project = "%s" AND status = "%s" AND statusCategory = "%s"`, projectKey, status, statusCategory)
+	jql := fmt.Sprintf(`project = "%s" AND status = "%s" AND statusCategory = %d`, projectKey, status, statusCategoryID)
 
 	for {
 		params := url.Values{}
