@@ -87,7 +87,7 @@ func (i *Integration) DiscoverIntegrations(jsonData []byte) ([]integration.Integ
 	}
 	integrations = append(integrations, integration.Integration{
 		ProviderID: jiraInstance.BaseURL,
-		Name:       jiraInstance.DisplayURL,
+		Name:       jiraInstance.ServerTitle,
 	})
 
 	return integrations, nil

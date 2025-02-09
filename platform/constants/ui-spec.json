@@ -141,19 +141,33 @@
           "detail_order": 3
         },
         {
+          "name": "integration_count",
+          "label": "Integration Count",
+          "fieldType": "text",
+          "order": 4,
+          "sortable": true,
+          "filterable": true,
+          "show": true,
+          "info": "Number of active integrations using this credential.",
+          "detail": true,
+          "detail_order": 4
+        },
+        {
           "name": "credential_type",
           "label": "Credential Type",
           "fieldType": "text",
           "required": true,
-          "order": 4,
+          "order": 5,
           "info": "Type of Credential used.",
           "valueMap": {
             "api_key": "API Key",
             "base_url": "Server base URL",
-            "username": "email address associated with account"
+            "username": "Email address associated with server",
+            "password": "Password associated with server"
           },
-          "detail": false,
-          "detail_order": 4
+          "show": true,
+          "detail": true,
+          "detail_order": 5
         }
       ]
     },

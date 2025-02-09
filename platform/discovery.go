@@ -6,8 +6,8 @@ import (
 )
 
 type JiraServerInfo struct {
-	BaseURL    string `json:"baseUrl"`
-	DisplayURL string `json:"displayUrl"`
+	BaseURL     string `json:"baseUrl"`
+	ServerTitle string `json:"serverTitle"`
 }
 
 // JiraIntegrationDiscovery fetches Jira server info details using the provided url, username and token.
