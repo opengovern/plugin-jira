@@ -52,6 +52,52 @@
             "external_help_url": ""
           }
         ]
+      },
+      {
+        "type": "password",
+        "label": "Password",
+        "priority": 1,
+        "fields": [
+          {
+            "name": "password",
+            "label": "Password",
+            "inputType": "password",
+            "required": true,
+            "order": 1,
+            "validation": {
+              "pattern": "^[a-zA-Z0-9+_/-]{0,200}$",
+              "errorMessage": ""
+            },
+            "info": "Your local jira server password.",
+            "external_help_url": ""
+          },
+          {
+            "name": "username",
+            "label": "Username",
+            "inputType": "text",
+            "required": true,
+            "order": 2,
+            "validation": {
+              "pattern": "^[a-zA-Z0-9+_/-]{0,200}$",
+              "errorMessage": ""
+            },
+            "info": "Your email address associated with jira account",
+            "external_help_url": ""
+          },
+          {
+            "name": "base_url",
+            "label": "Base URL",
+            "inputType": "text",
+            "required": true,
+            "order": 3,
+            "validation": {
+              "pattern": "^[a-zA-Z0-9+_/-]{0,200}$",
+              "errorMessage": ""
+            },
+            "info": "The address of your jira server",
+            "external_help_url": ""
+          }
+        ]
       }
     ],
     "integrations": [
@@ -176,7 +222,7 @@
       {
         "type": "update",
         "label": "Update",
-        "editableFields": ["api_key", "base_url", "username"]
+        "editableFields": ["api_key", "password", "base_url", "username"]
       },
       {
         "type": "delete",

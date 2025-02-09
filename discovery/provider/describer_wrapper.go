@@ -9,14 +9,18 @@ import (
 )
 
 // DescribeListByJira A wrapper to pass Jira authorization to describers functions
-func DescribeListByJira(describe func(context.Context, *jira.Client, *model.StreamSender) ([]model.Resource, error)) model.ResourceDescriber {
+func DescribeListByJira(describe func(context.Context, *jira.Client, *model.StreamSender, bool) ([]model.Resource, error)) model.ResourceDescriber {
 	return func(ctx context.Context, cfg model.IntegrationCredentials, triggerType enums.DescribeTriggerType, additionalParameters map[string]string, stream *model.StreamSender) ([]model.Resource, error) {
 		ctx = WithTriggerType(ctx, triggerType)
 
+		var isLocal bool
 		var err error
-		// Check for the api_key
 		if cfg.APIKey == "" {
-			return nil, errors.New("api key must be configured")
+			if cfg.Password == "" {
+				return nil, errors.New("api key or password must be configured")
+			} else {
+				isLocal = true
+			}
 		}
 		if cfg.Username == "" {
 			return nil, errors.New("username must be configured")
@@ -24,10 +28,28 @@ func DescribeListByJira(describe func(context.Context, *jira.Client, *model.Stre
 		if cfg.BaseURL == "" {
 			return nil, errors.New("base url must be configured")
 		}
+		if cfg.Password == "" {
+			if cfg.APIKey == "" {
+				return nil, errors.New("api key or password must be configured")
+			} else {
+				isLocal = false
+			}
+		}
+		if cfg.APIKey != "" && cfg.Password != "" {
+			return nil, errors.New("only one of api key or password must be configured")
+		}
 
-		tp := jira.BasicAuthTransport{
-			Username: cfg.Username,
-			Password: cfg.APIKey,
+		var tp jira.BasicAuthTransport
+		if isLocal {
+			tp = jira.BasicAuthTransport{
+				Username: cfg.Username,
+				Password: cfg.Password,
+			}
+		} else {
+			tp = jira.BasicAuthTransport{
+				Username: cfg.Username,
+				Password: cfg.APIKey,
+			}
 		}
 
 		client, err := jira.NewClient(tp.Client(), cfg.BaseURL)
@@ -37,7 +59,7 @@ func DescribeListByJira(describe func(context.Context, *jira.Client, *model.Stre
 
 		// Get values from describers
 		var values []model.Resource
-		result, err := describe(ctx, client, stream)
+		result, err := describe(ctx, client, stream, isLocal)
 		if err != nil {
 			return nil, err
 		}
@@ -47,14 +69,18 @@ func DescribeListByJira(describe func(context.Context, *jira.Client, *model.Stre
 }
 
 // DescribeSingleByJira A wrapper to pass Jira authorization to describers functions
-func DescribeSingleByJira(describe func(context.Context, *jira.Client, string) (*model.Resource, error)) model.SingleResourceDescriber {
+func DescribeSingleByJira(describe func(context.Context, *jira.Client, string, bool) (*model.Resource, error)) model.SingleResourceDescriber {
 	return func(ctx context.Context, cfg model.IntegrationCredentials, triggerType enums.DescribeTriggerType, additionalParameters map[string]string, resourceID string, stream *model.StreamSender) (*model.Resource, error) {
 		ctx = WithTriggerType(ctx, triggerType)
 
+		var isLocal bool
 		var err error
-		// Check for the api_key
 		if cfg.APIKey == "" {
-			return nil, errors.New("api key must be configured")
+			if cfg.Password == "" {
+				return nil, errors.New("api key or password must be configured")
+			} else {
+				isLocal = true
+			}
 		}
 		if cfg.Username == "" {
 			return nil, errors.New("username must be configured")
@@ -62,10 +88,28 @@ func DescribeSingleByJira(describe func(context.Context, *jira.Client, string) (
 		if cfg.BaseURL == "" {
 			return nil, errors.New("base url must be configured")
 		}
+		if cfg.Password == "" {
+			if cfg.APIKey == "" {
+				return nil, errors.New("api key or password must be configured")
+			} else {
+				isLocal = false
+			}
+		}
+		if cfg.APIKey != "" && cfg.Password != "" {
+			return nil, errors.New("only one of api key or password must be configured")
+		}
 
-		tp := jira.BasicAuthTransport{
-			Username: cfg.Username,
-			Password: cfg.APIKey,
+		var tp jira.BasicAuthTransport
+		if isLocal {
+			tp = jira.BasicAuthTransport{
+				Username: cfg.Username,
+				Password: cfg.Password,
+			}
+		} else {
+			tp = jira.BasicAuthTransport{
+				Username: cfg.Username,
+				Password: cfg.APIKey,
+			}
 		}
 
 		client, err := jira.NewClient(tp.Client(), cfg.BaseURL)
@@ -74,7 +118,7 @@ func DescribeSingleByJira(describe func(context.Context, *jira.Client, string) (
 		}
 
 		// Get value from describers
-		value, err := describe(ctx, client, resourceID)
+		value, err := describe(ctx, client, resourceID, isLocal)
 		if err != nil {
 			return nil, err
 		}

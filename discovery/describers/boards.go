@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func ListBoards(ctx context.Context, client *jira.Client, stream *models.StreamSender) ([]models.Resource, error) {
+func ListBoards(ctx context.Context, client *jira.Client, stream *models.StreamSender, isLocal bool) ([]models.Resource, error) {
 	var boards []provider.BoardJSON
 	var boardListResp provider.BoardListResponse
 	baseURL := "rest/agile/1.0/board"
@@ -65,7 +65,7 @@ func ListBoards(ctx context.Context, client *jira.Client, stream *models.StreamS
 	return values, nil
 }
 
-func GetBoard(ctx context.Context, client *jira.Client, resourceID string) (*models.Resource, error) {
+func GetBoard(ctx context.Context, client *jira.Client, resourceID string, isLocal bool) (*models.Resource, error) {
 	var board provider.BoardJSON
 	baseURL := "rest/agile/1.0/board/"
 	finalURL := fmt.Sprintf("%s%s", baseURL, resourceID)

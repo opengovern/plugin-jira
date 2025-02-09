@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func ListIssues(ctx context.Context, client *jira.Client, stream *models.StreamSender) ([]models.Resource, error) {
+func ListIssues(ctx context.Context, client *jira.Client, stream *models.StreamSender, isLocal bool) ([]models.Resource, error) {
 	var issues []provider.IssueJSON
 	var issueListResp provider.IssueListResponse
 
@@ -72,7 +72,12 @@ func ListIssues(ctx context.Context, client *jira.Client, stream *models.StreamS
 		}
 	}
 
-	baseURL := "rest/api/3/search"
+	var baseURL string
+	if isLocal {
+		baseURL = "rest/api/2/search"
+	} else {
+		baseURL = "rest/api/3/search"
+	}
 	last := 0
 	jql := fmt.Sprintf(`project = "%s" AND status = "%s" AND statusCategory = %d`, projectKey, status, statusCategoryID)
 
@@ -440,9 +445,14 @@ func ListIssues(ctx context.Context, client *jira.Client, stream *models.StreamS
 	return values, nil
 }
 
-func GetIssue(ctx context.Context, client *jira.Client, resourceID string) (*models.Resource, error) {
+func GetIssue(ctx context.Context, client *jira.Client, resourceID string, isLocal bool) (*models.Resource, error) {
 	var issue provider.IssueJSON
-	baseURL := "rest/api/3/issue/"
+	var baseURL string
+	if isLocal {
+		baseURL = "rest/api/2/issue/"
+	} else {
+		baseURL = "rest/api/3/issue/"
+	}
 	finalURL := fmt.Sprintf("%s%s", baseURL, resourceID)
 
 	req, err := client.NewRequest("GET", finalURL, nil)
