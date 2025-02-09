@@ -6,7 +6,7 @@ import (
 )
 
 // JiraIntegrationHealthcheck checks if the given Jira credentials is valid.
-func JiraIntegrationHealthcheck(baseUrl, username, apiToken string, isLocal bool) (bool, error) {
+func JiraIntegrationHealthcheck(baseUrl, username, pass string, isLocal bool) (bool, error) {
 	var instance JiraServerInfo
 	var finalURL string
 	if isLocal {
@@ -17,7 +17,7 @@ func JiraIntegrationHealthcheck(baseUrl, username, apiToken string, isLocal bool
 
 	tp := jira.BasicAuthTransport{
 		Username: username,
-		Password: apiToken,
+		Password: pass,
 	}
 
 	client, err := jira.NewClient(tp.Client(), baseUrl)

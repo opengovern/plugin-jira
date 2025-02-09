@@ -38,21 +38,24 @@ func (i *Integration) HealthCheck(jsonData []byte, providerId string, labels map
 		return false, err
 	}
 	var isLocal bool
+	var pass string
 	if credentials.Password == "" {
 		if credentials.APIKey == "" {
 			return false, fmt.Errorf("password or api key must be configured")
 		} else {
 			isLocal = false
+			pass = credentials.APIKey
 		}
 	} else {
 		if credentials.APIKey != "" {
 			return false, fmt.Errorf("only one of password and api key must be configured")
 		} else {
 			isLocal = true
+			pass = credentials.Password
 		}
 	}
 
-	isHealthy, err := JiraIntegrationHealthcheck(credentials.BaseURL, credentials.Username, credentials.APIKey, isLocal)
+	isHealthy, err := JiraIntegrationHealthcheck(credentials.BaseURL, credentials.Username, pass, isLocal)
 	return isHealthy, err
 }
 
