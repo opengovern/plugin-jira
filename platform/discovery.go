@@ -11,13 +11,18 @@ type JiraServerInfo struct {
 }
 
 // JiraIntegrationDiscovery fetches Jira server info details using the provided url, username and token.
-func JiraIntegrationDiscovery(baseUrl, username, apiToken string) (*JiraServerInfo, error) {
+func JiraIntegrationDiscovery(baseUrl, username, pass string, isLocal bool) (*JiraServerInfo, error) {
 	var instance JiraServerInfo
-	finalURL := "rest/api/3/serverInfo"
+	var finalURL string
+	if isLocal {
+		finalURL = "rest/api/2/serverInfo"
+	} else {
+		finalURL = "rest/api/3/serverInfo"
+	}
 
 	tp := jira.BasicAuthTransport{
 		Username: username,
-		Password: apiToken,
+		Password: pass,
 	}
 
 	client, err := jira.NewClient(tp.Client(), baseUrl)
