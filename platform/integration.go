@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/opengovern/og-describer-jira/global"
 	"github.com/opengovern/og-describer-jira/global/maps"
 	"github.com/opengovern/og-describer-jira/platform/constants"
@@ -36,8 +37,22 @@ func (i *Integration) HealthCheck(jsonData []byte, providerId string, labels map
 	if err != nil {
 		return false, err
 	}
+	var isLocal bool
+	if credentials.Password == "" {
+		if credentials.APIKey == "" {
+			return false, fmt.Errorf("password or api key must be configured")
+		} else {
+			isLocal = false
+		}
+	} else {
+		if credentials.APIKey != "" {
+			return false, fmt.Errorf("only one of password and api key must be configured")
+		} else {
+			isLocal = true
+		}
+	}
 
-	isHealthy, err := JiraIntegrationHealthcheck(credentials.BaseURL, credentials.Username, credentials.APIKey)
+	isHealthy, err := JiraIntegrationHealthcheck(credentials.BaseURL, credentials.Username, credentials.APIKey, isLocal)
 	return isHealthy, err
 }
 
@@ -48,8 +63,25 @@ func (i *Integration) DiscoverIntegrations(jsonData []byte) ([]integration.Integ
 		return nil, err
 	}
 	var integrations []integration.Integration
+	var isLocal bool
+	var pass string
+	if credentials.Password == "" {
+		if credentials.APIKey == "" {
+			return nil, fmt.Errorf("password or api key must be configured")
+		} else {
+			pass = credentials.APIKey
+			isLocal = false
+		}
+	} else {
+		if credentials.APIKey != "" {
+			return nil, fmt.Errorf("only one of password and api key must be configured")
+		} else {
+			pass = credentials.Password
+			isLocal = true
+		}
+	}
 
-	jiraInstance, err := JiraIntegrationDiscovery(credentials.BaseURL, credentials.Username, credentials.APIKey)
+	jiraInstance, err := JiraIntegrationDiscovery(credentials.BaseURL, credentials.Username, pass, isLocal)
 	if err != nil {
 		return nil, err
 	}
