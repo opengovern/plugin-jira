@@ -8,7 +8,7 @@ import (
 	"github.com/opengovern/og-describer-jira/discovery/provider"
 )
 
-func ListProjects(ctx context.Context, client *jira.Client, stream *models.StreamSender) ([]models.Resource, error) {
+func ListProjects(ctx context.Context, client *jira.Client, stream *models.StreamSender, isLocal bool) ([]models.Resource, error) {
 	var project provider.ProjectJSON
 
 	var projectKey string
@@ -24,7 +24,12 @@ func ListProjects(ctx context.Context, client *jira.Client, stream *models.Strea
 		return nil, fmt.Errorf("project key parameter must be configured")
 	}
 
-	baseURL := "rest/api/3/project/"
+	var baseURL string
+	if isLocal {
+		baseURL = "rest/api/2/project/"
+	} else {
+		baseURL = "rest/api/3/project/"
+	}
 	finalURL := fmt.Sprintf("%s%s", baseURL, projectKey)
 
 	req, err := client.NewRequest("GET", finalURL, nil)
@@ -160,9 +165,14 @@ func ListProjects(ctx context.Context, client *jira.Client, stream *models.Strea
 //	return values, nil
 //}
 
-func GetProject(ctx context.Context, client *jira.Client, resourceID string) (*models.Resource, error) {
+func GetProject(ctx context.Context, client *jira.Client, resourceID string, isLocal bool) (*models.Resource, error) {
 	var project provider.ProjectJSON
-	baseURL := "rest/api/3/project/"
+	var baseURL string
+	if isLocal {
+		baseURL = "rest/api/2/project/"
+	} else {
+		baseURL = "rest/api/3/project/"
+	}
 	finalURL := fmt.Sprintf("%s%s", baseURL, resourceID)
 
 	req, err := client.NewRequest("GET", finalURL, nil)
