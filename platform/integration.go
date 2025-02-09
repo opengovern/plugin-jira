@@ -64,21 +64,24 @@ func (i *Integration) DiscoverIntegrations(jsonData []byte) ([]integration.Integ
 	}
 	var integrations []integration.Integration
 	var isLocal bool
+	var pass string
 	if credentials.Password == "" {
 		if credentials.APIKey == "" {
 			return nil, fmt.Errorf("password or api key must be configured")
 		} else {
+			pass = credentials.APIKey
 			isLocal = false
 		}
 	} else {
 		if credentials.APIKey != "" {
 			return nil, fmt.Errorf("only one of password and api key must be configured")
 		} else {
+			pass = credentials.Password
 			isLocal = true
 		}
 	}
 
-	jiraInstance, err := JiraIntegrationDiscovery(credentials.BaseURL, credentials.Username, credentials.APIKey, isLocal)
+	jiraInstance, err := JiraIntegrationDiscovery(credentials.BaseURL, credentials.Username, pass, isLocal)
 	if err != nil {
 		return nil, err
 	}
