@@ -136,15 +136,14 @@ func ListIssues(ctx context.Context, client *jira.Client, stream *models.StreamS
 				Self:        attachment.Author.Self,
 			}
 			attachments = append(attachments, provider.Attachment{
-				Author:    user,
-				Content:   attachment.Content,
-				Created:   attachment.Created,
-				Filename:  attachment.Filename,
-				ID:        attachment.ID,
-				MimeType:  attachment.MimeType,
-				Self:      attachment.Self,
-				Size:      attachment.Size,
-				Thumbnail: attachment.Thumbnail,
+				Author:   user,
+				Content:  attachment.Content,
+				Created:  attachment.Created,
+				Filename: attachment.Filename,
+				ID:       attachment.ID,
+				MimeType: attachment.MimeType,
+				Self:     attachment.Self,
+				Size:     attachment.Size,
 			})
 		}
 		var subTasks []provider.SubTask
@@ -173,25 +172,6 @@ func ListIssues(ctx context.Context, client *jira.Client, stream *models.StreamS
 				OutwardIssue: outwardIssue,
 				Type:         issueType,
 			})
-		}
-		var contentDetails []provider.ContentDetail
-		for _, contentDetail := range issue.Fields.Description.Content {
-			var textContents []provider.TextContent
-			for _, textContent := range contentDetail.Content {
-				textContents = append(textContents, provider.TextContent{
-					Type: textContent.Type,
-					Text: textContent.Text,
-				})
-			}
-			contentDetails = append(contentDetails, provider.ContentDetail{
-				Type:    contentDetail.Type,
-				Content: textContents,
-			})
-		}
-		description := provider.Content{
-			Type:    issue.Fields.Description.Type,
-			Version: issue.Fields.Description.Version,
-			Content: contentDetails,
 		}
 		avatarUrls := provider.AvatarUrls{
 			Small16x16:  issue.Fields.Project.AvatarUrls.Small16x16,
@@ -238,25 +218,6 @@ func ListIssues(ctx context.Context, client *jira.Client, stream *models.StreamS
 				Name:        comment.Author.Name,
 				Self:        comment.Author.Self,
 			}
-			var bodyContentDetails []provider.ContentDetail
-			for _, contentDetail := range comment.Body.Content {
-				var bodyTextContents []provider.TextContent
-				for _, textContent := range contentDetail.Content {
-					bodyTextContents = append(bodyTextContents, provider.TextContent{
-						Type: textContent.Type,
-						Text: textContent.Text,
-					})
-				}
-				bodyContentDetails = append(bodyContentDetails, provider.ContentDetail{
-					Type:    contentDetail.Type,
-					Content: bodyTextContents,
-				})
-			}
-			body := provider.Content{
-				Type:    comment.Body.Type,
-				Version: comment.Body.Version,
-				Content: bodyContentDetails,
-			}
 			updateAuthorAvatarUrls := provider.AvatarUrls{
 				Small16x16:  comment.Author.AvatarUrls.Small16x16,
 				Small24x24:  comment.Author.AvatarUrls.Small24x24,
@@ -280,7 +241,6 @@ func ListIssues(ctx context.Context, client *jira.Client, stream *models.StreamS
 			}
 			comments = append(comments, provider.Comment{
 				Author:       author,
-				Body:         body,
 				Created:      comment.Created,
 				ID:           comment.ID,
 				Self:         comment.Self,
@@ -348,25 +308,6 @@ func ListIssues(ctx context.Context, client *jira.Client, stream *models.StreamS
 				Name:        worklog.Author.Name,
 				Self:        worklog.Author.Self,
 			}
-			var commentContentDetails []provider.ContentDetail
-			for _, contentDetail := range worklog.Comment.Content {
-				var commentTextContents []provider.TextContent
-				for _, textContent := range contentDetail.Content {
-					commentTextContents = append(commentTextContents, provider.TextContent{
-						Type: textContent.Type,
-						Text: textContent.Text,
-					})
-				}
-				commentContentDetails = append(commentContentDetails, provider.ContentDetail{
-					Type:    contentDetail.Type,
-					Content: commentTextContents,
-				})
-			}
-			comment := provider.Content{
-				Type:    worklog.Comment.Type,
-				Version: worklog.Comment.Version,
-				Content: commentContentDetails,
-			}
 			updateAuthorAvatarUrls := provider.AvatarUrls{
 				Small16x16:  worklog.Author.AvatarUrls.Small16x16,
 				Small24x24:  worklog.Author.AvatarUrls.Small24x24,
@@ -390,7 +331,6 @@ func ListIssues(ctx context.Context, client *jira.Client, stream *models.StreamS
 			}
 			worklogs = append(worklogs, provider.WorklogEntry{
 				Author:           author,
-				Comment:          comment,
 				ID:               worklog.ID,
 				IssueID:          worklog.IssueID,
 				Self:             worklog.Self,
@@ -414,7 +354,6 @@ func ListIssues(ctx context.Context, client *jira.Client, stream *models.StreamS
 			Watcher:      watcher,
 			Attachment:   attachments,
 			SubTasks:     subTasks,
-			Description:  description,
 			Project:      project,
 			Comment:      comments,
 			IssueLinks:   issueLinks,
@@ -490,15 +429,14 @@ func GetIssue(ctx context.Context, client *jira.Client, resourceID string, isLoc
 			Self:        attachment.Author.Self,
 		}
 		attachments = append(attachments, provider.Attachment{
-			Author:    user,
-			Content:   attachment.Content,
-			Created:   attachment.Created,
-			Filename:  attachment.Filename,
-			ID:        attachment.ID,
-			MimeType:  attachment.MimeType,
-			Self:      attachment.Self,
-			Size:      attachment.Size,
-			Thumbnail: attachment.Thumbnail,
+			Author:   user,
+			Content:  attachment.Content,
+			Created:  attachment.Created,
+			Filename: attachment.Filename,
+			ID:       attachment.ID,
+			MimeType: attachment.MimeType,
+			Self:     attachment.Self,
+			Size:     attachment.Size,
 		})
 	}
 	var subTasks []provider.SubTask
@@ -527,25 +465,6 @@ func GetIssue(ctx context.Context, client *jira.Client, resourceID string, isLoc
 			OutwardIssue: outwardIssue,
 			Type:         issueType,
 		})
-	}
-	var contentDetails []provider.ContentDetail
-	for _, contentDetail := range issue.Fields.Description.Content {
-		var textContents []provider.TextContent
-		for _, textContent := range contentDetail.Content {
-			textContents = append(textContents, provider.TextContent{
-				Type: textContent.Type,
-				Text: textContent.Text,
-			})
-		}
-		contentDetails = append(contentDetails, provider.ContentDetail{
-			Type:    contentDetail.Type,
-			Content: textContents,
-		})
-	}
-	description := provider.Content{
-		Type:    issue.Fields.Description.Type,
-		Version: issue.Fields.Description.Version,
-		Content: contentDetails,
 	}
 	avatarUrls := provider.AvatarUrls{
 		Small16x16:  issue.Fields.Project.AvatarUrls.Small16x16,
@@ -592,25 +511,6 @@ func GetIssue(ctx context.Context, client *jira.Client, resourceID string, isLoc
 			Name:        comment.Author.Name,
 			Self:        comment.Author.Self,
 		}
-		var bodyContentDetails []provider.ContentDetail
-		for _, contentDetail := range comment.Body.Content {
-			var bodyTextContents []provider.TextContent
-			for _, textContent := range contentDetail.Content {
-				bodyTextContents = append(bodyTextContents, provider.TextContent{
-					Type: textContent.Type,
-					Text: textContent.Text,
-				})
-			}
-			bodyContentDetails = append(bodyContentDetails, provider.ContentDetail{
-				Type:    contentDetail.Type,
-				Content: bodyTextContents,
-			})
-		}
-		body := provider.Content{
-			Type:    comment.Body.Type,
-			Version: comment.Body.Version,
-			Content: bodyContentDetails,
-		}
 		updateAuthorAvatarUrls := provider.AvatarUrls{
 			Small16x16:  comment.Author.AvatarUrls.Small16x16,
 			Small24x24:  comment.Author.AvatarUrls.Small24x24,
@@ -634,7 +534,6 @@ func GetIssue(ctx context.Context, client *jira.Client, resourceID string, isLoc
 		}
 		comments = append(comments, provider.Comment{
 			Author:       author,
-			Body:         body,
 			Created:      comment.Created,
 			ID:           comment.ID,
 			Self:         comment.Self,
@@ -702,25 +601,6 @@ func GetIssue(ctx context.Context, client *jira.Client, resourceID string, isLoc
 			Name:        worklog.Author.Name,
 			Self:        worklog.Author.Self,
 		}
-		var commentContentDetails []provider.ContentDetail
-		for _, contentDetail := range worklog.Comment.Content {
-			var commentTextContents []provider.TextContent
-			for _, textContent := range contentDetail.Content {
-				commentTextContents = append(commentTextContents, provider.TextContent{
-					Type: textContent.Type,
-					Text: textContent.Text,
-				})
-			}
-			commentContentDetails = append(commentContentDetails, provider.ContentDetail{
-				Type:    contentDetail.Type,
-				Content: commentTextContents,
-			})
-		}
-		comment := provider.Content{
-			Type:    worklog.Comment.Type,
-			Version: worklog.Comment.Version,
-			Content: commentContentDetails,
-		}
 		updateAuthorAvatarUrls := provider.AvatarUrls{
 			Small16x16:  worklog.Author.AvatarUrls.Small16x16,
 			Small24x24:  worklog.Author.AvatarUrls.Small24x24,
@@ -744,7 +624,6 @@ func GetIssue(ctx context.Context, client *jira.Client, resourceID string, isLoc
 		}
 		worklogs = append(worklogs, provider.WorklogEntry{
 			Author:           author,
-			Comment:          comment,
 			ID:               worklog.ID,
 			IssueID:          worklog.IssueID,
 			Self:             worklog.Self,
@@ -768,7 +647,6 @@ func GetIssue(ctx context.Context, client *jira.Client, resourceID string, isLoc
 		Watcher:      watcher,
 		Attachment:   attachments,
 		SubTasks:     subTasks,
-		Description:  description,
 		Project:      project,
 		Comment:      comments,
 		IssueLinks:   issueLinks,

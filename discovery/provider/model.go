@@ -101,7 +101,6 @@ type FieldsJSON struct {
 	Watcher      WatcherJSON        `json:"watcher"`
 	Attachment   []AttachmentJSON   `json:"attachment"`
 	SubTasks     []SubTaskJSON      `json:"sub-tasks"`
-	Description  ContentJSON        `json:"description"`
 	Project      ProjectJSON        `json:"project"`
 	Comment      []CommentJSON      `json:"comment"`
 	IssueLinks   []IssueLinkJSON    `json:"issuelinks"`
@@ -114,7 +113,6 @@ type Fields struct {
 	Watcher      Watcher
 	Attachment   []Attachment
 	SubTasks     []SubTask
-	Description  Content
 	Project      ProjectDescription
 	Comment      []Comment
 	IssueLinks   []IssueLink
@@ -136,27 +134,25 @@ type Watcher struct {
 }
 
 type AttachmentJSON struct {
-	Author    UserJSON `json:"author"`
-	Content   string   `json:"content"`
-	Created   string   `json:"created"`
-	Filename  string   `json:"filename"`
-	ID        int      `json:"id"`
-	MimeType  string   `json:"mimeType"`
-	Self      string   `json:"self"`
-	Size      int      `json:"size"`
-	Thumbnail string   `json:"thumbnail"`
+	Author   UserJSON `json:"author"`
+	Content  string   `json:"content"`
+	Created  string   `json:"created"`
+	Filename string   `json:"filename"`
+	ID       int      `json:"id"`
+	MimeType string   `json:"mimeType"`
+	Self     string   `json:"self"`
+	Size     int      `json:"size"`
 }
 
 type Attachment struct {
-	Author    User
-	Content   string
-	Created   string
-	Filename  string
-	ID        int
-	MimeType  string
-	Self      string
-	Size      int
-	Thumbnail string
+	Author   User
+	Content  string
+	Created  string
+	Filename string
+	ID       int
+	MimeType string
+	Self     string
+	Size     int
 }
 
 type UserJSON struct {
@@ -273,7 +269,6 @@ type TextContent struct {
 
 type CommentJSON struct {
 	Author       UserJSON       `json:"author"`
-	Body         ContentJSON    `json:"body"`
 	Created      string         `json:"created"`
 	ID           string         `json:"id"`
 	Self         string         `json:"self"`
@@ -284,7 +279,6 @@ type CommentJSON struct {
 
 type Comment struct {
 	Author       User
-	Body         Content
 	Created      string
 	ID           string
 	Self         string
@@ -321,7 +315,6 @@ type IssueLink struct {
 
 type WorklogEntryJSON struct {
 	Author           UserJSON       `json:"author"`
-	Comment          ContentJSON    `json:"comment"`
 	ID               string         `json:"id"`
 	IssueID          string         `json:"issueId"`
 	Self             string         `json:"self"`
@@ -335,7 +328,6 @@ type WorklogEntryJSON struct {
 
 type WorklogEntry struct {
 	Author           User
-	Comment          Content
 	ID               string
 	IssueID          string
 	Self             string
