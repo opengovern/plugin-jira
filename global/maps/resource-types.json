@@ -48,5 +48,19 @@
     "GetDescriber": "DescribeSingleByJira(describers.GetBoard)",
     "SteampipeTable": "jira_board",
     "Model": "Board"
+  },
+  {
+    "ResourceName": "Jira/Group",
+    "ListDescriber": "DescribeListByJira(describers.ListGroups)",
+    "GetDescriber": "",
+    "SteampipeTable": "jira_group",
+    "Model": "Group"
+  },
+  {
+    "ResourceName": "Jira/User",
+    "ListDescriber": "DescribeListByJira(describers.ListUsers)",
+    "GetDescriber": "",
+    "SteampipeTable": "jira_user",
+    "Model": "User"
   }
 ]
