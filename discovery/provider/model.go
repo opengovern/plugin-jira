@@ -376,3 +376,30 @@ type BoardDescription struct {
 	Self string
 	Type string
 }
+
+type GroupListResponse struct {
+	IsLast  bool        `json:"isLast"`
+	StartAt int         `json:"startAt"`
+	Values  []GroupJSON `json:"values"`
+}
+
+type GroupJSON struct {
+	GroupID string `json:"groupId"`
+	Name    string `json:"name"`
+}
+
+type GroupDescription struct {
+	GroupID string
+	Name    string
+}
+
+type UserDescription struct {
+	AccountID   string
+	AccountType string
+	Active      bool
+	AvatarURLs  AvatarUrls
+	DisplayName string
+	Key         string
+	Name        string
+	Self        string
+}

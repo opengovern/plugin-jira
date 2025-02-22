@@ -22,6 +22,8 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"jira_board":   tableJiraBoard(ctx),
 			"jira_issue":   tableJiraIssue(ctx),
 			"jira_project": tableJiraProject(ctx),
+			"jira_group":   tableJiraGroup(ctx),
+			"jira_user":    tableJiraUser(ctx),
 		},
 	}
 	for key, table := range p.TableMap {
